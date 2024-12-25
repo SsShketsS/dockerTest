@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product and Production Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Product and Production Management</h1>
+
+    <!-- Products Section -->
+    <h2>Products</h2>
+    <form id="productForm">
+        <div class="mb-3">
+            <input type="text" id="productName" class="form-control" placeholder="Product Name">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="addProduct()">Add Product</button>
+    </form>
+    <h3>All Products</h3>
+    <ul id="productList" class="list-group"></ul>
+
+    <hr>
+
+    <!-- Productions Section -->
+    <h2>Productions</h2>
+    <form id="productionForm">
+        <div class="mb-3">
+            <input type="text" id="productionName" class="form-control" placeholder="Production Name">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="addProduction()">Add Production</button>
+    </form>
+    <h3>All Productions</h3>
+    <ul id="productionList" class="list-group"></ul>
+</div>
+<script>
+    // Fetch all products
+    async function fetchProducts() {
+        const response = await fetch('/product');
+        if (!response.ok) {
+            alert('Failed to fetch products!');
+            return;
+        }
+
+        const products = await response.json();
+        const productList = document.getElementById('productList');
+        productList.innerHTML = '';
+
+        products.forEach(product => {
+            const li = document.createElement('li');
+            li.className = "list-group-item d-flex justify-content-between align-items-center";
+            li.textContent = product.name;
+
+            const btn = document.createElement('button');
+            btn.className = "btn btn-danger btn-sm";
+            btn.textContent = "Delete";
+            btn.onclick = async () => {
+                await deleteProduct(product.id);
+                fetchProducts(); // Обновляем список после удаления
+            };
+
+            li.appendChild(btn);
+            productList.appendChild(li);
+        });
+    }
+
+    // Add a product
+    async function addProduct() {
+        const productName = document.getElementById('productName').value;
+        if (!productName) {
+            alert('Please enter a product name!');
+            return;
+        }
+
+        const response = await fetch('/product', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: productName })
+        });
+
+        if (!response.ok) {
+            alert('Failed to add product!');
+            return;
+        }
+
+        document.getElementById('productName').value = '';
+        fetchProducts();
+    }
+
+    // Delete a product
+    async function deleteProduct(id) {
+        const response = await fetch(`/product/${id}`, { method: 'DELETE' });
+
+        if (!response.ok) {
+            alert('Failed to delete product!');
+        }
+    }
+
+    // Fetch all productions
+    async function fetchProductions() {
+        const response = await fetch('/production');
+        if (!response.ok) {
+            alert('Failed to fetch productions!');
+            return;
+        }
+
+        const productions = await response.json();
+        const productionList = document.getElementById('productionList');
+        productionList.innerHTML = '';
+
+        productions.forEach(production => {
+            const li = document.createElement('li');
+            li.className = "list-group-item d-flex justify-content-between align-items-center";
+            li.textContent = production.name;
+
+            const btn = document.createElement('button');
+            btn.className = "btn btn-danger btn-sm";
+            btn.textContent = "Delete";
+            btn.onclick = async () => {
+                await deleteProduction(production.id);
+                fetchProductions(); // Обновляем список после удаления
+            };
+
+            li.appendChild(btn);
+            productionList.appendChild(li);
+        });
+    }
+
+    // Add a production
+    async function addProduction() {
+        const productionName = document.getElementById('productionName').value;
+        if (!productionName) {
+            alert('Please enter a production name!');
+            return;
+        }
+
+        const response = await fetch('/production', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: productionName })
+        });
+
+        if (!response.ok) {
+            alert('Failed to add production!');
+            return;
+        }
+
+        document.getElementById('productionName').value = '';
+        fetchProductions();
+    }
+
+    // Delete a production
+    async function deleteProduction(id) {
+        const response = await fetch(`/production/${id}`, { method: 'DELETE' });
+
+        if (!response.ok) {
+            alert('Failed to delete production!');
+        }
+    }
+
+    // Initial data fetch
+    fetchProducts();
+    fetchProductions();
+</script>
+</body>
+</html>

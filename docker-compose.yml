@@ -1,0 +1,18 @@
+version: '3.14'
+
+volumes:
+  pg_payalnik:
+
+services:
+  payalnik_db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=228322
+      - POSTGRES_DB=payalnik_db
+    volumes:
+      - pg_payalnik:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+
