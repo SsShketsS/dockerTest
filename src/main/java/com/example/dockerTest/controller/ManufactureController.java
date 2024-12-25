@@ -21,7 +21,7 @@ public class ManufactureController {
     public Manufacture produce(@RequestBody ManufactureRequest request) {
         return manufactureService.manufactureProduct(request.getProductionId(), request.getQuantity());
     }
-
+    //Добавил херню
     public static class ManufactureRequest {
         private Long productionId;
         private int quantity;
